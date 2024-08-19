@@ -13,7 +13,7 @@ logging.getLogger("exifread").setLevel(logging.ERROR)  # Remove warnings
 
 # Argument parsing
 parser = argparse.ArgumentParser(
-    description="Move photos to directory with time of their creation"
+    description="copy/move picture files according to year/month of exif tag 'EXIF DateTimeOriginal' "
 )
 parser.add_argument(
     "-s",
