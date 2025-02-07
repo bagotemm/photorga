@@ -1,11 +1,12 @@
 """Move photos to directory with time of their creation"""
 
 import argparse
-import os
-from pathlib import Path
-import shutil
 import logging
-from dateutil import parser as DateParser
+import os
+import shutil
+from pathlib import Path
+from time import strptime
+
 import exifread
 
 TAG_DATE_ORIGINAL = "EXIF DateTimeOriginal"
@@ -36,6 +37,8 @@ parser.add_argument(
     action="store_true",
 )
 argument = parser.parse_args()
+
+
 # Check source and target directories
 source_directory = Path(argument.src_directory)
 if source_directory.exists() is False:
@@ -45,28 +48,32 @@ target_directory = Path(argument.target_directory)
 if target_directory.exists() is False:
     print(f"Target directory ({target_directory}) does not exist.")
     exit()
+
 # Walk source directory
 for path, subdirs, files in os.walk(source_directory):
     for name in files:
+        if path == target_directory:
+            continue
         image_path = os.path.join(path, name)
-        #Check extension
+        # Check extension
         if image_path.endswith((".png", ".jpg")) is False:
             continue
         with open(image_path, "rb") as fh:
-            #Read tag
+            # Read tag
             tags = exifread.process_file(fh, stop_tag=TAG_DATE_ORIGINAL)
             if TAG_DATE_ORIGINAL in tags:
-                #Creation time
+                exif_creation_time = tags[TAG_DATE_ORIGINAL].values
+                # Creation time
                 CREATION_TIME = (
-                    DateParser.parse(tags[TAG_DATE_ORIGINAL].values)
+                    strptime(exif_creation_time, '%Y:%m:%d %H:%M:%S')
                     if TAG_DATE_ORIGINAL in tags
                     else None
                 )
                 if CREATION_TIME:
-                    #Create directory
+                    # Create directory
                     print(">>> Analyse de " + image_path)
-                    CREATION_TIME_YEAR = str(CREATION_TIME.year)
-                    CREATION_TIME_MONTH = str(CREATION_TIME.month)
+                    CREATION_TIME_YEAR = str(CREATION_TIME.tm_year)
+                    CREATION_TIME_MONTH = str(CREATION_TIME.tm_mon)
                     directory = os.path.join(
                         target_directory,
                         CREATION_TIME_YEAR,
@@ -79,7 +86,7 @@ for path, subdirs, files in os.walk(source_directory):
                     if os.path.exists(directory) is False:
                         os.makedirs(directory)
                         print(f"{directory} created")
-                    #Copy/Move file
+                    # Copy/Move file
                     target = os.path.join(directory, name)
                     print(target)
                     if image_path != target:
