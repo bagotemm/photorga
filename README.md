@@ -19,7 +19,7 @@ options:
                         source directory
   -t TARGET_DIRECTORY, --target_directory TARGET_DIRECTORY
                         target directory
-  -m, --move            Move insted of co
+  -m, --move            Move insted of copy
 ```
 
 ## License
