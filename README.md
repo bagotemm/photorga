@@ -9,7 +9,7 @@ pip install -r requirements.txt
 
 ## Usage
 ```bash
-usage: photorga.py [-h] [-s SRC_DIRECTORY] [-t TARGET_DIRECTORY] [-m]
+usage: photorga.py [-h] [-s SRC_DIRECTORY] [-t TARGET_DIRECTORY] [--move] [--debug]
 
 Move photos to directory with time of their creation
 
@@ -19,8 +19,8 @@ options:
                         source directory
   -t TARGET_DIRECTORY, --target_directory TARGET_DIRECTORY
                         target directory
-  -m, --move            Move insted of copy
-```
+  --move            Move insted of copy
+  --debug           Debug
 
 ## License
 
